@@ -10,6 +10,9 @@ using Dong.Retail.Authorization;
 using Dong.Retail.Organizations.Dto;
 using System.Linq.Dynamic.Core;
 using Abp.Extensions;
+using Dong.Retail.Authorization.Users;
+using Dong.Retail.MultiTenancy;
+using Dong.Retail.Url;
 using Microsoft.EntityFrameworkCore;
 
 namespace Dong.Retail.Organizations
@@ -20,15 +23,19 @@ namespace Dong.Retail.Organizations
         private readonly OrganizationUnitManager _organizationUnitManager;
         private readonly IRepository<OrganizationUnit, long> _organizationUnitRepository;
         private readonly IRepository<UserOrganizationUnit, long> _userOrganizationUnitRepository;
+        private readonly IAppUrlService _appUrlService;
+
 
         public OrganizationUnitAppService(
             OrganizationUnitManager organizationUnitManager,
             IRepository<OrganizationUnit, long> organizationUnitRepository,
-            IRepository<UserOrganizationUnit, long> userOrganizationUnitRepository)
+            IRepository<UserOrganizationUnit, long> userOrganizationUnitRepository,
+            IAppUrlService appUrlService)
         {
             _organizationUnitManager = organizationUnitManager;
             _organizationUnitRepository = organizationUnitRepository;
             _userOrganizationUnitRepository = userOrganizationUnitRepository;
+            _appUrlService = appUrlService;
         }
 
         public async Task<ListResultDto<OrganizationUnitDto>> GetOrganizationUnits()
@@ -73,12 +80,35 @@ namespace Dong.Retail.Organizations
         [AbpAuthorize(AppPermissions.Pages_Administration_OrganizationUnits_ManageOrganizationTree)]
         public async Task<OrganizationUnitDto> CreateOrganizationUnit(CreateOrganizationUnitInput input)
         {
-            var organizationUnit = new OrganizationUnit(AbpSession.TenantId, input.DisplayName, input.ParentId);
+
+            var user = await UserManager.GetUserByIdAsync(input.UserId);
+
+            //2017.10.17:修改组织为宿主级
+            var organizationUnit = new OrganizationUnit(null, input.DisplayName, input.ParentId);
 
             await _organizationUnitManager.CreateAsync(organizationUnit);
             await CurrentUnitOfWork.SaveChangesAsync();
 
-            return ObjectMapper.Map<OrganizationUnitDto>(organizationUnit);
+            //todo:生产租户信息
+            var tenantId = await TenantManager.CreateWithAdminUserAsync(input.DisplayName,
+                input.DisplayName,
+                organizationUnit.Id,
+                null,
+                user.EmailAddress,
+                null,
+                true,
+                input.EditionId,
+                true,
+                false,
+                null,
+                false,
+                _appUrlService.CreateEmailActivationUrlFormat(input.DisplayName)
+            );
+
+            var result = ObjectMapper.Map<OrganizationUnitDto>(organizationUnit);
+
+            result.TenantId = tenantId;
+            return result;
         }
 
         [AbpAuthorize(AppPermissions.Pages_Administration_OrganizationUnits_ManageOrganizationTree)]

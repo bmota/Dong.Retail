@@ -79,7 +79,7 @@ namespace Dong.Retail.MultiTenancy
 
         public async Task<int> CreateWithAdminUserAsync(
             string tenancyName,
-            string name,
+            string name, long orgId,
             string adminPassword,
             string adminEmailAddress,
             string connectionString,
@@ -99,7 +99,7 @@ namespace Dong.Retail.MultiTenancy
             using (var uow = _unitOfWorkManager.Begin(TransactionScopeOption.RequiresNew))
             {
                 //Create tenant
-                var tenant = new Tenant(tenancyName, name)
+                var tenant = new Tenant(tenancyName, name,orgId)
                 {
                     IsActive = isActive,
                     EditionId = editionId,

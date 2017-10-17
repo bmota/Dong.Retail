@@ -52,8 +52,9 @@ namespace Dong.Retail.MultiTenancy
         [UnitOfWork(IsDisabled = true)]
         public async Task CreateTenant(CreateTenantInput input)
         {
+            //todo:这里需要找到组织ID
             await TenantManager.CreateWithAdminUserAsync(input.TenancyName,
-                input.Name,
+                input.Name,0,
                 input.AdminPassword,
                 input.AdminEmailAddress,
                 input.ConnectionString,

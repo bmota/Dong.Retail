@@ -14,5 +14,11 @@ namespace Dong.Retail.Organizations.Dto
         public string DisplayName { get; set; }
 
         public int MemberCount { get; set; }
+
+
+        /// <summary>
+        /// 租户Id
+        /// </summary>
+        public long TenantId { get; set; }
     }
 }

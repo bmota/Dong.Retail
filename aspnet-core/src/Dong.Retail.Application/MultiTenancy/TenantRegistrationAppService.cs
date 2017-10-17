@@ -104,9 +104,10 @@ namespace Dong.Retail.MultiTenancy
                     }
                 }
 
+                //todo：需要处理组织ID
                 var tenantId = await _tenantManager.CreateWithAdminUserAsync(
                     input.TenancyName,
-                    input.Name,
+                    input.Name,0,
                     input.AdminPassword,
                     input.AdminEmailAddress,
                     null,

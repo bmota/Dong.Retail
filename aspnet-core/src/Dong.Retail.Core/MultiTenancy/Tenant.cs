@@ -30,6 +30,11 @@ namespace Dong.Retail.MultiTenancy
         [MaxLength(MaxLogoMimeTypeLength)]
         public virtual string LogoFileType { get; set; }
 
+        /// <summary>
+        /// 组织Id
+        /// </summary>
+        public  long OrgId { get; set; }
+
         protected Tenant()
         {
 
@@ -38,7 +43,13 @@ namespace Dong.Retail.MultiTenancy
         public Tenant(string tenancyName, string name)
             : base(tenancyName, name)
         {
+        }
 
+
+        public Tenant(string tenancyName, string name,long orgId)
+            : base(tenancyName, name)
+        {
+            this.OrgId = orgId;
         }
 
         public virtual bool HasLogo()

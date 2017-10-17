@@ -10,5 +10,10 @@ namespace Dong.Retail.Organizations.Dto
         [Required]
         [StringLength(OrganizationUnit.MaxDisplayNameLength)]
         public string DisplayName { get; set; } 
+
+        [Required]
+        public long UserId { get; set; }
+
+        public int? EditionId { get; set; }
     }
 }
