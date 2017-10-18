@@ -1,6 +1,6 @@
 ﻿import { Component, ViewChild, Injector, Output, EventEmitter, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap';
-import { OrganizationUnitServiceProxy, CreateOrganizationUnitInput, UpdateOrganizationUnitInput, OrganizationUnitDto } from '@shared/service-proxies/service-proxies';
+import { OrganizationUnitServiceProxy, CreateOrganizationUnitInput, UpdateOrganizationUnitInput, OrganizationUnitDto ,ComboboxItemDto } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 import * as _ from "lodash";
@@ -25,6 +25,7 @@ export class CreateOrEditUnitModalComponent extends AppComponentBase {
 
     active: boolean = false;
     saving: boolean = false;
+    tenantUsers: ComboboxItemDto[] = [];
 
     organizationUnit: IOrganizationUnitOnEdit = {};
 
